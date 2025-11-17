@@ -192,31 +192,206 @@ Leveraging temporal information from video sequences.
 
 ## ✋ Hand Pose Estimation
 
-Detecting and tracking hand joints and finger positions.
+> 📖 **[Complete Hand & Finger Pose Guide](HAND_POSE.md)** - Ultra-comprehensive documentation covering all aspects of hand pose estimation
 
-### 🌟 Popular Methods & Frameworks
+Detecting and tracking hand joints and finger positions - one of the most challenging problems in computer vision with 27 DOF and severe self-occlusion.
 
-**MediaPipe Hands** 🔥
-- On-device real-time hand tracking
-- Detects 21 3D hand landmarks
-- Palm detection + hand landmark model
-- Runs on mobile, web, desktop
-- 📄 [Paper](https://arxiv.org/abs/2006.10214) | [Code](https://github.com/google/mediapipe)
+### 🎯 Key Areas
 
-**Other Notable Methods:**
+<table>
+<tr>
+<td width="25%">
 
-| Method | Year | Type | Key Features | Code |
-|--------|------|------|--------------|------|
-| **FreiHAND** | 2019 | 3D | Dataset + benchmark | [GitHub](https://github.com/lmb-freiburg/freihand) |
-| **InterHand2.6M** | 2020 | 3D | Large-scale two-hand dataset | [GitHub](https://github.com/facebookresearch/InterHand2.6M) |
-| **HandOccNet** | 2022 | 3D | Occlusion-aware hand pose | [GitHub](https://github.com/namepllet/HandOccNet) |
-| **A2J** | 2019 | 3D | Anchor-based 3D hand pose | [GitHub](https://github.com/zhangboshen/A2J) |
+**2D/3D Pose**
+- 21 keypoint detection
+- Monocular RGB methods
+- RGB-D approaches
+- Real-time tracking
 
-### Applications
-- 👆 Hand gesture recognition
-- 🎮 VR/AR interaction
-- 🤖 Human-computer interaction
-- 🎵 Sign language recognition
+</td>
+<td width="25%">
+
+**3D Mesh Reconstruction**
+- MANO parametric model
+- HaMeR (2024 SOTA)
+- MeshGraphormer
+- 778 vertices output
+
+</td>
+<td width="25%">
+
+**Hand-Object Interaction**
+- Grasping analysis
+- Contact modeling
+- Joint reconstruction
+- Physics-based methods
+
+</td>
+<td width="25%">
+
+**Applications**
+- Sign language (98%+ accuracy)
+- VR/AR interaction
+- Gesture recognition
+- Robot manipulation
+
+</td>
+</tr>
+</table>
+
+### 🔥 State-of-the-Art Methods (2024-2025)
+
+#### 3D Hand Mesh Reconstruction
+
+| Method | Year | Type | PA-MPJPE | Key Innovation | Code |
+|--------|------|------|----------|----------------|------|
+| **HaMeR** | 2024 | Parametric | 5.6mm | Transformer-based, SOTA accuracy | [GitHub](https://github.com/geopavlakos/hamer) |
+| **Hamba** | 2024 | Parametric | 5.2mm | Mamba architecture, bi-scanning | [arXiv](https://arxiv.org/abs/2407.09646) |
+| **MaskHand** | 2024 | Parametric | 5.1mm | Masked modeling, 7.5% improvement | [arXiv](https://arxiv.org/abs/2412.13393) |
+| **MeshGraphormer** | 2021 | Non-parametric | 6.0mm | Graph transformer | [GitHub](https://github.com/microsoft/MeshGraphormer) |
+
+#### Real-Time Hand Tracking
+
+**MediaPipe Hands** 🌟
+- ✅ 21 3D landmarks @ 30+ FPS
+- ✅ Multi-hand support (up to 2 hands)
+- ✅ Cross-platform (mobile, web, desktop)
+- ✅ Palm detection + landmark model
+- 📄 [Paper](https://arxiv.org/abs/2006.10214) | 💻 [Code](https://github.com/google/mediapipe)
+
+**Performance:**
+- Accuracy: 95%+ on palm detection
+- Latency: 33ms on Pixel 3
+- Landmarks: <5% error relative to palm size
+
+### 🤝 Hand-Object Interaction (2024-2025)
+
+Recent breakthroughs in understanding how hands interact with objects:
+
+| Method | Venue | Innovation | Application |
+|--------|-------|------------|-------------|
+| **HOLD** | CVPR 2024 | First template-free HOI from video | Articulated objects |
+| **HOIC** | SIGGRAPH 2024 | Physics-based RL reconstruction | RGBD manipulation |
+| **DiffH2O** | SIGGRAPH Asia 2024 | Text-to-interaction generation | Dexterous grasping |
+| **ManiVideo** | CVPR 2025 | Hand-object manipulation video | Generalizable grasping |
+| **HOISDF** | CVPR 2024 | Global SDF constraints | SOTA on DexYCB |
+
+### 👐 Two-Hand Interaction
+
+**InterHand2.6M Dataset** - First large-scale dataset for interacting hands
+- 📊 2.6M annotated frames
+- 🤝 Single + interacting hands
+- 📐 3D joint locations (42 keypoints)
+
+**Recent Methods:**
+- **HandFI** (2024): Multi-level feature fusion
+- **VM-BHINet** (2025): Vision Mamba for bimanual hands
+- **InterHandGen** (2024): Diffusion-based generation
+
+### 🥽 Egocentric Hand Pose
+
+Critical for AR/VR applications with unique challenges:
+- Close-range perspective distortion
+- Partial visibility
+- Motion blur
+- Limited field of view
+
+**Recent Solutions:**
+- Multi-view egocentric tracking (Meta Quest 3, Apple Vision Pro)
+- ECCV 2024 Challenge winner: 13.92mm MPJPE
+- EgoWorld (2025): Exo-to-ego view translation
+
+### 🤟 Sign Language Recognition
+
+**Real-Time ASL (2025):** 98.2% accuracy using YOLOv11 + MediaPipe
+- Real-time inference on standard webcam
+- Handles visually similar gestures (A/T, M/N)
+- mAP@0.5: 98.2%
+
+**Applications:**
+- American Sign Language (ASL) alphabet
+- Continuous sign language translation
+- Fingerspelling recognition (71.7% SOTA)
+
+### 📊 Major Datasets
+
+| Dataset | Year | Type | Samples | Features | Links |
+|---------|------|------|---------|----------|-------|
+| **FreiHAND** | 2019 | RGB | 134K | 21 joints + mesh | [Website](https://lmb.informatik.uni-freiburg.de/projects/freihand/) |
+| **RHD** | 2017 | RGB | 44K | Synthetic hands | [Website](https://lmb.informatik.uni-freiburg.de/resources/datasets/RenderedHandposeDataset.en.html) |
+| **InterHand2.6M** | 2020 | RGB | 2.6M | Two-hand interaction | [Website](https://mks0601.github.io/InterHand2.6M/) |
+| **HO-3D** | 2020 | RGB-D | 77K | Hand + object | [GitHub](https://github.com/shreyashampali/ho3d) |
+| **DexYCB** | 2021 | RGB-D | 582K | Grasping | [Website](https://dex-ycb.github.io/) |
+| **ContactPose** | 2020 | RGB-D | 2.9K | Contact annotations | [Website](https://contactpose.cc.gatech.edu/) |
+
+### 🛠️ Production Tools
+
+**Frameworks:**
+- **MediaPipe**: Real-time, cross-platform
+- **MMPose**: 200+ models, research-focused
+- **HaMeR**: 3D mesh reconstruction
+- **Detectron2**: Keypoint R-CNN
+
+**Specialized:**
+- **MANO/Manopth**: Parametric hand model
+- **PyTorch3D**: 3D deep learning
+- **Open3D**: Point cloud processing
+
+### 💻 Quick Start
+
+```python
+import mediapipe as mp
+import cv2
+
+# Initialize MediaPipe Hands
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.7)
+
+# Process frame
+image = cv2.imread('hand.jpg')
+results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+# Get 21 keypoints per hand
+if results.multi_hand_landmarks:
+    for hand_landmarks in results.multi_hand_landmarks:
+        # Access individual joints: wrist (0), thumb_tip (4), index_tip (8), etc.
+        wrist = hand_landmarks.landmark[0]
+        print(f"Wrist: x={wrist.x}, y={wrist.y}, z={wrist.z}")
+```
+
+### 🎯 Applications & Use Cases
+
+- **🥽 AR/VR**: Natural hand interaction in virtual environments
+- **🤖 Robotics**: Teaching by demonstration, teleoperation
+- **🏥 Healthcare**: Rehabilitation monitoring, surgical training
+- **🎮 Gaming**: Gesture-based controls, motion capture
+- **♿ Accessibility**: Sign language translation, assistive tech
+- **🚗 Automotive**: Touchless infotainment controls
+
+### 📏 Evaluation Metrics
+
+- **MPJPE**: Mean Per Joint Position Error (mm)
+- **PA-MPJPE**: Procrustes Aligned MPJPE
+- **AUC**: Area Under PCK Curve (0-50mm)
+- **PCK**: Percentage of Correct Keypoints
+- **F@Xmm**: Fraction of frames under X mm error
+
+### 🔮 Latest Trends (2024-2025)
+
+1. **Transformer dominance**: ViT-based architectures outperform CNNs
+2. **Foundation models**: Large-scale pre-training for generalization
+3. **Generative approaches**: Diffusion models for hand synthesis
+4. **Physics integration**: Biomechanical constraints, contact modeling
+5. **Multimodal fusion**: Vision + IMU + tactile sensing
+
+---
+
+> 📚 **For comprehensive coverage**, see our [Complete Hand & Finger Pose Estimation Guide](HAND_POSE.md) with:
+> - Detailed method explanations
+> - Complete code examples
+> - Dataset comparisons
+> - Benchmark results
+> - Implementation tutorials
 
 ---
 
