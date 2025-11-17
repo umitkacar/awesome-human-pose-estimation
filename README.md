@@ -142,51 +142,514 @@ Latest approaches using vision transformers and attention mechanisms.
 
 ## 🎭 3D Human Pose Estimation
 
-Estimating 3D joint locations in world coordinates from images or videos.
+Estimating 3D joint locations in world coordinates from images or videos - the foundation for AR/VR, motion capture, sports analytics, and healthcare applications.
 
-### Monocular 3D Pose
+### 🎯 Problem Settings & Approaches
 
-Recovering 3D pose from single RGB images - the most challenging setting.
+<table>
+<tr>
+<td width="33%">
 
-#### 🔬 Recent Advances (2024-2025)
+**Monocular RGB** 🔥
+- Single camera input
+- Depth ambiguity challenge
+- Most practical setting
+- Latest: SSMs, Diffusion
 
-**State-Space Models & Diffusion Models**
-- Novel approaches incorporating SSMs and diffusion for 3D HPE
-- Handle depth ambiguity through probabilistic modeling
-- Generate diverse, plausible pose hypotheses
+</td>
+<td width="33%">
 
-**Generative Models**
-- GANs, VAEs, Diffusion Models for 3D pose
-- Capture distribution of plausible poses
-- Handle occlusion and depth ambiguity
+**Multi-View**
+- Multiple synchronized cameras
+- Triangulation/voxel-based
+- High accuracy
+- Costly setup
 
-#### 📚 Key Papers
+</td>
+<td width="33%">
 
-| Method | Year | Venue | Approach | Code |
-|--------|------|-------|----------|------|
-| **VideoPose3D** | 2019 | CVPR | Temporal convolutions on 2D poses | [GitHub](https://github.com/facebookresearch/VideoPose3D) |
-| **SimpleBaseline3D** | 2017 | ICCV | Lifting 2D to 3D | [GitHub](https://github.com/una-dinosauria/3d-pose-baseline) |
-| **MotionBERT** | 2022 | ICCV | Pre-training for 3D pose | [GitHub](https://github.com/Walter0807/MotionBERT) |
-| **MHFormer** | 2022 | CVPR | Multi-hypothesis transformer | [GitHub](https://github.com/Vegetebird/MHFormer) |
-| **MixSTE** | 2022 | CVPR | Spatial-temporal transformer | [GitHub](https://github.com/JinluZhang1126/MixSTE) |
+**Video-Based**
+- Temporal consistency
+- Motion priors
+- Smooth trajectories
+- Real-world applicable
 
-### Multi-View 3D Pose
+</td>
+</tr>
+</table>
 
-Using multiple synchronized cameras for 3D reconstruction.
+---
 
-- **Triangulation-based**: Traditional multi-view geometry
-- **Volume-based**: 3D voxel representations
-- **Graph-based**: Multi-view fusion via graphs
+### 🔥 Latest Methods (2024-2025)
 
-### Video-Based 3D Pose
+#### State-Space Models (Mamba Architecture)
 
-Leveraging temporal information from video sequences.
+**SasMamba** (November 2024) - SOTA Efficiency
+- Structure-Aware Stride SSM (SAS-SSM)
+- Multi-scale global representations
+- Linear complexity O(n)
+- 5× faster than Transformers
+- 📄 [Paper](https://arxiv.org/abs/2511.08872)
 
-**Key Approaches:**
-- 🎬 Temporal convolutional networks (TCNs)
-- 🎬 Recurrent networks (LSTMs, GRUs)
-- 🎬 Transformer-based temporal modeling
-- 🎬 Hybrid approaches with IMU sensors
+**PoseMamba** (August 2024)
+- Bidirectional global-local spatio-temporal SSM
+- Purely SSM-based (no convolutions)
+- Linear complexity for long sequences
+- Spatial reordering strategy
+- 📄 [Paper](https://arxiv.org/abs/2408.03540)
+
+**Why Mamba for 3D Pose?**
+- ✅ Superior long-range modeling
+- ✅ Linear complexity vs quadratic (Transformers)
+- ✅ Fast inference (5× throughput)
+- ✅ Better temporal modeling
+- ✅ Scales to long videos
+
+#### Diffusion Models (Probabilistic 3D Pose)
+
+**HDPose** (2024) - Hierarchical Diffusion
+- Post-hierarchical diffusion with conditioning
+- Iterative denoising from noisy 3D pose
+- No adversarial training (stable)
+- Multiple plausible hypotheses
+- 📄 [Paper](https://www.mdpi.com/1424-8220/24/3/829)
+
+**FinePOSE** (May 2024)
+- Fine-grained prompt-driven denoiser
+- Part-aware prompt learning
+- Diffusion-based generation
+- 📄 [Paper](https://arxiv.org/abs/2405.05216)
+
+**DiffuPose** (2024)
+- Denoising Diffusion Probabilistic Model
+- Handles depth ambiguity
+- Generative modeling approach
+- 📄 [arXiv](https://www.researchgate.net/publication/376499642)
+
+**Key Innovation:** Diffusion models generate multiple hypotheses instead of single prediction, naturally handling depth ambiguity and occlusion.
+
+---
+
+### 📚 Monocular 3D Pose Methods
+
+#### 2D-to-3D Lifting
+
+**Classic Approach:**
+```
+RGB Image → 2D Pose Detector → 2D Keypoints → 3D Lifting Network → 3D Pose
+```
+
+| Method | Year | MPJPE (H3.6M) | Key Innovation | Code |
+|--------|------|---------------|----------------|------|
+| **Martinez Baseline** | 2017 | 37.7mm | Simple FC residual nets | [GitHub](https://github.com/una-dinosauria/3d-pose-baseline) |
+| **SemGCN** | 2019 | 35.2mm | Semantic graph convolutions | [GitHub](https://github.com/garyzhao/SemGCN) |
+| **MotionAGFormer** | 2024 | 33.4mm | Transformer-GCN hybrid | - |
+
+**Advantages:**
+- ✅ Leverage strong 2D detectors
+- ✅ Modular design
+- ✅ Can train separately
+- ✅ Better generalization
+
+**Martinez Method** (ICCV 2017) 🌟
+- Foundational 2D→3D lifting baseline
+- Simple feedforward network
+- Still competitive in 2024
+- Used in many recent works
+
+#### End-to-End 3D Prediction
+
+Direct regression from RGB to 3D pose without explicit 2D detection.
+
+**Advantages:**
+- ✅ No error accumulation
+- ✅ Joint optimization
+- ✅ Faster inference
+
+---
+
+### 🎬 Video-Based Temporal 3D Pose
+
+Exploiting temporal consistency across frames for smoother, more accurate 3D pose.
+
+#### Temporal Convolutional Approaches
+
+**VideoPose3D** (CVPR 2019) 🌟
+- Dilated temporal convolutions
+- Semi-supervised training
+- 46.8mm MPJPE on Human3.6M
+- Foundational work for video-based methods
+- 📄 [Paper](https://arxiv.org/abs/1811.11742) | 💻 [Code](https://github.com/facebookresearch/VideoPose3D)
+
+**Architecture:**
+```
+2D Keypoints Sequence → Temporal Conv (dilated) → 3D Pose Sequence
+```
+
+#### Transformer-Based Temporal Methods
+
+**PoseFormer** (ICCV 2021)
+- First pure transformer for 3D pose
+- Spatial-temporal attention
+- Models joint relations + temporal correlations
+- No convolutions required
+- 📄 [Paper](https://arxiv.org/abs/2103.10455)
+
+**MHFormer** (CVPR 2022) - Multi-Hypothesis
+- Multiple hypothesis generation
+- Transformer-based
+- Improves representational power
+- Synthesizes diverse pose hypotheses
+- 💻 [Code](https://github.com/Vegetebird/MHFormer)
+
+**MixSTE** (CVPR 2022) - Spatial-Temporal Excellence
+- Joints as tokens (temporal + spatial)
+- Preserves sequence coherence
+- Mixed spatial-temporal encoding
+- 💻 [Code](https://github.com/JinluZhang1126/MixSTE)
+
+**P-STMO** (ECCV 2022)
+- Pre-trained Spatial-Temporal Many-to-One
+- Strong baseline for comparisons
+- Used in many 2024 benchmarks
+
+**MotionBERT** (ICCV 2023)
+- Dual-stream spatio-temporal transformer
+- Long-range dependencies
+- Pre-training on large datasets
+- 💻 [Code](https://github.com/Walter0807/MotionBERT)
+
+#### Latest Efficiency Improvements (2024)
+
+**Hourglass Tokenizer (HoT)** - CVPR 2024
+- Reduces FLOPs by 50% on MotionBERT
+- Reduces FLOPs by 40% on MixSTE
+- Minimal performance loss (<0.2%)
+- Hierarchical token compression
+- 💻 [Code](https://github.com/NationalGAILab/HoT)
+
+**DASTFormer** (2024)
+- 39.6mm MPJPE (Protocol 1)
+- 33.4mm P-MPJPE (Protocol 2)
+- 7.5% improvement over P-STMO
+- Dynamic attention mechanisms
+
+#### Performance Comparison (Human3.6M)
+
+| Method | Year | MPJPE | PA-MPJPE | Approach |
+|--------|------|-------|----------|----------|
+| **DASTFormer** | 2024 | **39.6mm** | **33.4mm** | Transformer |
+| **MotionBERT** | 2023 | 41.2mm | 35.8mm | Transformer |
+| **MixSTE** | 2022 | 42.9mm | 36.1mm | Transformer |
+| **MHFormer** | 2022 | 43.0mm | 36.4mm | Transformer |
+| **PoseFormer** | 2021 | 44.3mm | 37.2mm | Transformer |
+| **VideoPose3D** | 2019 | 46.8mm | 36.5mm | TCN |
+
+---
+
+### 🎥 Multi-View 3D Pose Estimation
+
+Using multiple synchronized cameras for accurate 3D reconstruction.
+
+#### Voxel-Based Methods
+
+**VoxelPose** (ECCV 2020) 🌟
+- Projects 2D heatmaps to 3D voxel space
+- Coarse-to-fine refinement
+- Handles occlusion naturally
+- Multi-person capable
+
+**VoxelKeypointFusion** (October 2024)
+- Learning-free algorithmic approach
+- Voxel-based vs line-based triangulation
+- Multiple keypoints per ray
+- Detects occluded keypoints better
+- 📄 [Paper](https://arxiv.org/abs/2410.18723)
+
+**3DSA** (ECCV 2024) - 3D Space Attention
+- Attention mechanisms in voxel space
+- SOTA on CMU Panoptic Studio
+- Improves VoxelPose and Faster VoxelPose
+
+#### Triangulation-Based Methods
+
+**RapidPoseTriangulation** (2024)
+- Learning-free triangulation
+- Multi-person whole-body
+- Millisecond inference
+- Simple and effective
+- 📄 [Paper](https://arxiv.org/abs/2503.21692)
+
+**Classical Approach:**
+```
+Multi-view 2D Poses → Epipolar Geometry → Triangulation → 3D Pose
+```
+
+#### Latest Hybrid Approaches (2024)
+
+**Multiple View Geometry Transformers** (CVPR 2024)
+- Transformer-based multi-view fusion
+- End-to-end learning
+- Superior to VoxelPose
+- Reduces quantization error
+
+**Comparison:**
+- **Voxel-based**: Better occlusion handling, end-to-end trainable
+- **Triangulation**: Faster, learning-free, interpretable
+- **Hybrid**: Best accuracy, combines both approaches
+
+---
+
+### 🎨 3D Human Mesh Recovery (SMPL/SMPL-X)
+
+Reconstructing full 3D human body mesh (not just keypoints).
+
+#### SMPL Parametric Model
+
+**SMPL** = Skinned Multi-Person Linear model
+- **Vertices**: 6,890 vertices
+- **Faces**: 13,776 faces
+- **Parameters**:
+  - β (10): Shape parameters
+  - θ (72): Pose parameters (24 joints × 3 rotation)
+
+**SMPL-X** = Extended SMPL
+- Adds hands (MANO)
+- Adds face expression
+- Whole-body reconstruction
+
+#### Latest SMPL Methods (2024-2025)
+
+**ADHMR** (ICML 2025) 🔥
+- Aligning Diffusion-based HMR
+- Direct Preference Optimization
+- Latest SOTA approach
+- 💻 [Code](https://github.com/SMPLCap/ADHMR)
+
+**Multi-HMR** (ECCV 2024)
+- Multi-person whole-body in single shot
+- SMPL-X predictions
+- Hands + face + body
+- 3D location in camera coordinates
+- 📄 [Paper](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/03364.pdf)
+
+**CLIFF** (2024)
+- Carrying Location Information in Full Frames
+- Integrates spatial context
+- Compatible with all HMR frameworks
+
+**SMPLer-X** (NeurIPS 2023)
+- Scaling up expressive pose
+- Whole-body estimation
+- Large-scale training
+
+**RoboSMPLX** (NeurIPS 2023)
+- Enhanced robustness
+- Whole-body pose
+- Handles difficult cases
+
+#### Applications of SMPL
+- 🎮 **Gaming**: Avatar creation
+- 🎬 **VFX**: Digital humans
+- 👗 **Fashion**: Virtual try-on
+- 🏃 **Sports**: Biomechanics analysis
+- 🏥 **Healthcare**: Gait analysis
+
+---
+
+### 📊 Major 3D Pose Datasets & Benchmarks
+
+| Dataset | Year | Type | Frames | Subjects | Actions | Environment | MPJPE Baseline |
+|---------|------|------|--------|----------|---------|-------------|----------------|
+| **Human3.6M** | 2014 | Lab | 3.6M | 9 | 15 | Indoor, 4 cams | ~40mm |
+| **3DPW** | 2018 | Wild | 51K | 7 | 47 | Outdoor, in-the-wild | ~47mm |
+| **MPI-INF-3DHP** | 2017 | Mixed | 1.3M | 8 | 8 | Indoor + Outdoor, 14 cams | ~50mm |
+
+**Human3.6M** 🌟
+- Most popular benchmark
+- Laboratory setting, high quality
+- Protocols: P1 (MPJPE), P2 (PA-MPJPE)
+- Standard for method comparison
+
+**3DPW** 🌟
+- In-the-wild outdoor scenes
+- IMU sensors + video
+- Real-world performance evaluation
+- Challenging: occlusion, lighting, motion
+
+**MPI-INF-3DHP**
+- Both indoor & outdoor
+- Green screen + studio backgrounds
+- Multi-view (14 cameras)
+- Markerless MoCap system
+
+#### Recent Benchmark Datasets (2023-2024)
+
+**H3WB** (ICCV 2023)
+- Human3.6M 3D WholeBody
+- 133 keypoints (body + hands + face)
+- Extension of Human3.6M
+- 💻 [GitHub](https://github.com/wholebody3d/wholebody3d)
+
+**FreeMan** (CVPR 2024)
+- Real-world conditions benchmark
+- Diverse scenarios
+- Addresses dataset bias
+
+**AthletePose3D** (2024)
+- Athletic movements
+- Kinematic validation
+- Sports-specific
+
+---
+
+### 📏 Evaluation Metrics
+
+**MPJPE** (Mean Per Joint Position Error)
+```python
+MPJPE = mean(||pred_joints - gt_joints||₂)
+```
+- Unit: millimeters
+- Protocol 1 on Human3.6M
+- Direct 3D distance
+
+**PA-MPJPE** (Procrustes Aligned MPJPE)
+```python
+PA-MPJPE = MPJPE after Procrustes alignment
+```
+- Removes global rotation, scale, translation
+- Protocol 2 on Human3.6M
+- Focuses on pose structure
+
+**P-MPJPE** (Per-joint MPJPE)
+- Individual joint errors
+- Identifies weak joints
+
+**N-MPJPE** (Normalized MPJPE)
+- Normalized by torso size
+- Scale-invariant evaluation
+
+---
+
+### 💻 Quick Start Example
+
+#### VideoPose3D Inference
+
+```python
+import torch
+from common.model import TemporalModel
+
+# Load model
+model = TemporalModel(
+    num_joints_in=17,
+    in_features=2,
+    num_joints_out=17,
+    filter_widths=[3,3,3,3,3],
+    causal=False,
+    dropout=0.25,
+    channels=1024
+)
+
+checkpoint = torch.load('pretrained_h36m_detectron_coco.bin')
+model.load_state_dict(checkpoint['model_pos'])
+model.eval()
+
+# Input: 2D keypoints sequence [T, 17, 2]
+# Output: 3D pose sequence [T, 17, 3]
+with torch.no_grad():
+    predicted_3d = model(keypoints_2d)
+```
+
+#### MotionBERT Inference
+
+```python
+from lib.model.DSTformer import DSTformer
+
+# Load model
+model = DSTformer(
+    dim_in=3,
+    dim_out=3,
+    dim_feat=512,
+    dim_rep=512,
+    depth=5,
+    num_heads=8,
+    mlp_ratio=2
+)
+
+# Input: [B, T, J, C] - Batch, Time, Joints, Channels
+# Output: [B, T, J, 3] - 3D coordinates
+output_3d = model(input_2d)
+```
+
+---
+
+### 🔮 Latest Research Trends (2024-2025)
+
+1. **State-Space Models (Mamba)** 🔥
+   - Linear complexity
+   - Superior to Transformers for long sequences
+   - SasMamba, PoseMamba leading methods
+
+2. **Diffusion Models** 🔥
+   - Probabilistic 3D pose
+   - Multiple hypotheses
+   - Better uncertainty modeling
+
+3. **Foundation Models**
+   - Large-scale pre-training
+   - Cross-dataset generalization
+   - Few-shot adaptation
+
+4. **Neural Radiance Fields (NeRF)**
+   - 3D scene representation
+   - Novel view synthesis
+   - Implicit 3D modeling
+
+5. **Self-Supervised Learning**
+   - Monocular depth estimation
+   - Unlabeled video exploitation
+   - Reduced annotation cost
+
+6. **Real-Time Optimization**
+   - Efficient tokenization (HoT)
+   - Model compression
+   - Edge deployment
+
+7. **Multi-Modal Fusion**
+   - Vision + IMU sensors
+   - RGB-D integration
+   - Audio-visual cues
+
+---
+
+### 🎯 Applications
+
+- **🥽 AR/VR**: Full-body tracking for metaverse
+- **🎬 Motion Capture**: Film & gaming animation
+- **⚽ Sports Analytics**: Biomechanics, performance analysis
+- **🏥 Healthcare**: Gait analysis, rehabilitation monitoring
+- **🚗 Autonomous Driving**: Pedestrian pose understanding
+- **🤖 Robotics**: Human-robot interaction, imitation learning
+- **🎮 Gaming**: Real-time character control
+- **👮 Surveillance**: Behavior analysis, anomaly detection
+
+---
+
+### 📚 Key Resources
+
+**Benchmarks & Leaderboards:**
+- [Papers With Code - 3D HPE](https://paperswithcode.com/task/3d-human-pose-estimation)
+- [Human3.6M Leaderboard](http://vision.imar.ro/human3.6m/ranking.php)
+
+**Repositories:**
+- [Awesome 3D Human Pose](https://github.com/3dhumanbody/awesome-3d-human)
+- [VideoPose3D](https://github.com/facebookresearch/VideoPose3D)
+- [MotionBERT](https://github.com/Walter0807/MotionBERT)
+- [HoT (Hourglass Tokenizer)](https://github.com/NationalGAILab/HoT)
+
+**Latest Surveys:**
+- [Monocular 3D HPE Survey (April 2025)](https://www.mdpi.com/1424-8220/25/8/2409)
+- [Deep 3D HPE Survey (2024)](https://link.springer.com/article/10.1007/s10462-024-11019-3)
 
 ---
 
